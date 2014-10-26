@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">SimpleReminders</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="new_reminder_button">New reminder</string>
+    <string name="title_activity_add_reminder">AddReminderActivity</string>
+    <string name="acm_ucf.simplereminders.reminderdata"> </string>
+
+</resources>
