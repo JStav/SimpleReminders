@@ -42,7 +42,7 @@ public class CurrentRemindersActivity extends Activity {
 
         reminders.add(currentEvent);
 
-        
+        // changeeee
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, reminders);
         eventsListView = (ListView) findViewById(R.id.currentRemindersListView);
         eventsListView.setAdapter(arrayAdapter);
