@@ -19,17 +19,21 @@ import android.view.View;
 import android.widget.Toast;
 import acm.ucf.simplereminders.alarmreceiver.AlarmReceiver;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 
 public class AddReminderActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_reminder);
 
         ActionBar actionBar = getActionBar();
-        actionBar.hide();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
     }
 
 
@@ -62,24 +66,19 @@ public class AddReminderActivity extends Activity {
             EditText reminderTime = (EditText) findViewById(R.id.editText2);
 
             // Get the date and time
-            int month = datePicker.getMonth() + 1;
+            int month = datePicker.getMonth();
             int day = datePicker.getDayOfMonth();
             int year = datePicker.getYear();
 
             // Hour is given in military time, so we mod by 12 to get regular time. We need to make sure to do it only if it's bigger
             // than 12, because otherwise, 12 mod 12 = 0 and we don't want that
             Integer raw_hour = timePicker.getCurrentHour(); // Hour directly taken from the time picker, we don't want to modify this because we will use it for the calendar to make
+                                                            // a notification at a specified time
 
-            // a notification at a specified time
-            Integer newHour = raw_hour;
+            Integer hour = raw_hour;
 
             if (raw_hour > 12) {
-                newHour = raw_hour % 12;
-            }
-
-            String hour = newHour.toString();
-            if (raw_hour < 10) {
-                hour = "0" + newHour;                   // Prefix a 0 if the hour is less than 10
+                hour = raw_hour % 12;
             }
 
             Integer raw_minute = timePicker.getCurrentMinute();
@@ -88,7 +87,7 @@ public class AddReminderActivity extends Activity {
                 minute = "0" + raw_minute;              // Prefix a 0 if the minute is less than 10
             }
 
-            String reminder = month + "/" + day + "/" + year + " at " + hour + ":" + minute;    // Finally, build the string
+            String reminder = month + 1 + "/" + day + "/" + year + " at " + hour + ":" + minute;    // Finally, build the string
 
 
 
@@ -99,7 +98,7 @@ public class AddReminderActivity extends Activity {
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
             editor.putString("reminderEvent", reminder);
-            editor.commit();
+            editor.apply();
 
             // Create a calendar and set all the fields to make a reminder at a specific date and time
             Calendar cal = Calendar.getInstance();
@@ -108,8 +107,11 @@ public class AddReminderActivity extends Activity {
             cal.set(Calendar.YEAR, year);
             cal.set(Calendar.HOUR, raw_hour);
             cal.set(Calendar.MINUTE, raw_minute);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
 
             long millisAtReminder = cal.getTimeInMillis();
+            System.out.println(millisAtReminder);
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(this, AlarmReceiver.class);
@@ -122,8 +124,6 @@ public class AddReminderActivity extends Activity {
 
             alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), millisAtReminder, pendingIntent);
 
-
-
         }catch(NumberFormatException e) {
 
             System.err.println("NOPE");
@@ -135,5 +135,8 @@ public class AddReminderActivity extends Activity {
 
         }
 
+        Toast toast = Toast.makeText(getApplicationContext(), "Reminder set!", Toast.LENGTH_SHORT);
+        toast.show();
+        finish();
     }
 }

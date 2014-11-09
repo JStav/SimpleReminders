@@ -29,6 +29,7 @@ public class CurrentRemindersActivity extends Activity {
 
     }
 
+    // Refresh the listview, put under onStart so when the user presses back it will automatically update
     @Override
     protected void onStart(){
 
