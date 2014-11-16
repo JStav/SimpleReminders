@@ -13,9 +13,10 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        int uniquieID = intent.getIntExtra("UniqueID", 0);
 
         String description = intent.getStringExtra("Description");
         Notification notification = new Notification.Builder(context).setContentTitle(description).setContentText(description).setSmallIcon(R.drawable.ic_launcher).build();
-        nm.notify(IdGenerator.generateID(), notification);
+        nm.notify(uniquieID, notification);
     }
 }

@@ -67,6 +67,7 @@ public class AddReminderActivity extends Activity {
             EditText reminderDescription = (EditText) findViewById(R.id.editText);
             EditText reminderTime = (EditText) findViewById(R.id.editText2);
 
+
             // Get the date and time
             int month = datePicker.getMonth();
             int day = datePicker.getDayOfMonth();
@@ -85,6 +86,8 @@ public class AddReminderActivity extends Activity {
             cal.set(Calendar.SECOND, 0);
             cal.set(Calendar.MILLISECOND, 0);
 
+            int uniqueID = generateID(cal);
+
             long millisAtReminder = cal.getTimeInMillis();
             long millisNow = System.currentTimeMillis();
             long millisToDate = millisAtReminder - millisNow;
@@ -92,6 +95,7 @@ public class AddReminderActivity extends Activity {
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(this, AlarmReceiver.class);
+            intent.putExtra("UniqueID", uniqueID);
             intent.setAction("android.intent.action.NOTIFY");
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 
@@ -117,7 +121,7 @@ public class AddReminderActivity extends Activity {
             SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.acm_ucf_simplereminders_reminderdata), Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
-            editor.putString(Integer.toString(IdGenerator.generateID()), reminder);
+            editor.putString(Integer.toString(generateID(cal)), reminder);
             editor.apply();
 
 
@@ -138,5 +142,11 @@ public class AddReminderActivity extends Activity {
         finish();
     }
 
+    public int generateID(Calendar cal){
+        long ID = cal.getTimeInMillis();
+        ID = ID % 1000000000;
+
+        return (int)ID;
+    }
 
 }
