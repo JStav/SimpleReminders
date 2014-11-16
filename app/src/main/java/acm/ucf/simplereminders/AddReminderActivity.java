@@ -18,6 +18,8 @@ import android.widget.TimePicker;
 import android.view.View;
 import android.widget.Toast;
 import acm.ucf.simplereminders.alarmreceiver.AlarmReceiver;
+import acm.ucf.simplereminders.generate.id.IdGenerator;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -115,7 +117,7 @@ public class AddReminderActivity extends Activity {
             SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.acm_ucf_simplereminders_reminderdata), Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
-            editor.putString("reminderEvent", reminder);
+            editor.putString(Integer.toString(IdGenerator.generateID()), reminder);
             editor.apply();
 
 
