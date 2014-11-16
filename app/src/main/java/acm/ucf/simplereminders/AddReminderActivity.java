@@ -58,7 +58,7 @@ public class AddReminderActivity extends Activity {
 
     public void setReminder(View view){
 
-        //try {
+        try {
             // Instantiate all our required objects
             DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
             TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
@@ -95,44 +95,46 @@ public class AddReminderActivity extends Activity {
 
             alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, millisToAlarm, pendingIntent);
 
-//            // Hour is given in military time, so we mod by 12 to get regular time. We need to make sure to do it only if it's bigger
-//            // than 12, because otherwise, 12 mod 12 = 0 and we don't want that
-//            Integer hour = raw_hour;
-//
-//            if (raw_hour > 12) {
-//                hour = raw_hour % 12;
-//            }
-//
-//            String minute = raw_minute.toString();
-//            if (raw_minute < 10) {
-//                minute = "0" + raw_minute;              // Prefix a 0 if the minute is less than 10
-//            }
-//
-//            String reminder = month + 1 + "/" + day + "/" + year + " at " + hour + ":" + minute;    // Finally, build the string
-//
-//
-//            Context context = view.getContext();
-//            SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.acm_ucf_simplereminders_reminderdata), Context.MODE_PRIVATE);
-//            SharedPreferences.Editor editor = sharedPreferences.edit();
-//
-//            editor.putString("reminderEvent", reminder);
-//            editor.apply();
+            // Hour is given in military time, so we mod by 12 to get regular time. We need to make sure to do it only if it's bigger
+            // than 12, because otherwise, 12 mod 12 = 0 and we don't want that
+            Integer hour = raw_hour;
+
+            if (raw_hour > 12) {
+                hour = raw_hour % 12;
+            }
+
+            String minute = raw_minute.toString();
+            if (raw_minute < 10) {
+                minute = "0" + raw_minute;              // Prefix a 0 if the minute is less than 10
+            }
+
+            String reminder = month + 1 + "/" + day + "/" + year + " at " + hour + ":" + minute;    // Finally, build the string
 
 
-//
-//        }catch(NumberFormatException e) {
-//
-//            System.err.println("NOPE");
-//            Context context = getApplicationContext();
-//            CharSequence text = "Please enter a reminder time";
-//            int duration = Toast.LENGTH_SHORT;
-//            Toast toast = Toast.makeText(context, text, duration);
-//            toast.show();
-//
-//        }
-//
-//        Toast toast = Toast.makeText(getApplicationContext(), "Reminder set!", Toast.LENGTH_SHORT);
-//        toast.show();
-//        finish();
+            Context context = view.getContext();
+            SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.acm_ucf_simplereminders_reminderdata), Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            editor.putString("reminderEvent", reminder);
+            editor.apply();
+
+
+
+        }catch(NumberFormatException e) {
+
+            System.err.println("NOPE");
+            Context context = getApplicationContext();
+            CharSequence text = "Please enter a reminder time";
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+
+        }
+
+        Toast toast = Toast.makeText(getApplicationContext(), "Reminder set!", Toast.LENGTH_SHORT);
+        toast.show();
+        finish();
     }
+
+
 }

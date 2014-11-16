@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import acm.ucf.simplereminders.R;
+import acm.ucf.simplereminders.generate.id.IdGenerator;
 
 public class AlarmReceiver extends BroadcastReceiver {
     @Override
@@ -15,6 +16,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         String description = intent.getStringExtra("Description");
         Notification notification = new Notification.Builder(context).setContentTitle(description).setContentText(description).setSmallIcon(R.drawable.ic_launcher).build();
-        nm.notify(0, notification);
+        nm.notify(IdGenerator.generateID(), notification);
     }
 }
