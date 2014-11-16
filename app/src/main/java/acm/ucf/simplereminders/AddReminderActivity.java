@@ -58,11 +58,11 @@ public class AddReminderActivity extends Activity {
 
     public void setReminder(View view){
 
-        try {
+        //try {
             // Instantiate all our required objects
             DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
             TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
-            EditText description = (EditText) findViewById(R.id.editText);
+            EditText reminderDescription = (EditText) findViewById(R.id.editText);
             EditText reminderTime = (EditText) findViewById(R.id.editText2);
 
             // Get the date and time
@@ -70,73 +70,69 @@ public class AddReminderActivity extends Activity {
             int day = datePicker.getDayOfMonth();
             int year = datePicker.getYear();
 
-            // Hour is given in military time, so we mod by 12 to get regular time. We need to make sure to do it only if it's bigger
-            // than 12, because otherwise, 12 mod 12 = 0 and we don't want that
-            Integer raw_hour = timePicker.getCurrentHour(); // Hour directly taken from the time picker, we don't want to modify this because we will use it for the calendar to make
-                                                            // a notification at a specified time
-
-            Integer hour = raw_hour;
-
-            if (raw_hour > 12) {
-                hour = raw_hour % 12;
-            }
-
+            Integer raw_hour = timePicker.getCurrentHour(); // Hour directly taken from the time picker, used to set the calendar
             Integer raw_minute = timePicker.getCurrentMinute();
-            String minute = raw_minute.toString();
-            if (raw_minute < 10) {
-                minute = "0" + raw_minute;              // Prefix a 0 if the minute is less than 10
-            }
-
-            String reminder = month + 1 + "/" + day + "/" + year + " at " + hour + ":" + minute;    // Finally, build the string
-
-
-
-            int beforeTime = Integer.parseInt(reminderTime.getText().toString());       // Get the minutes ahead of time a user wants to be reminded, and parse it to an int
-
-            Context context = view.getContext();
-            SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.acm_ucf_simplereminders_reminderdata), Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-
-            editor.putString("reminderEvent", reminder);
-            editor.apply();
 
             // Create a calendar and set all the fields to make a reminder at a specific date and time
             Calendar cal = Calendar.getInstance();
             cal.set(Calendar.MONTH, month);
             cal.set(Calendar.DAY_OF_MONTH, day);
             cal.set(Calendar.YEAR, year);
-            cal.set(Calendar.HOUR, raw_hour);
+            cal.set(Calendar.HOUR_OF_DAY, raw_hour);
             cal.set(Calendar.MINUTE, raw_minute);
             cal.set(Calendar.SECOND, 0);
             cal.set(Calendar.MILLISECOND, 0);
 
             long millisAtReminder = cal.getTimeInMillis();
-            System.out.println(millisAtReminder);
+            long millisNow = System.currentTimeMillis();
+            long millisToDate = millisAtReminder - millisNow;
+            long millisToAlarm = millisToDate + SystemClock.elapsedRealtime();
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(this, AlarmReceiver.class);
             intent.setAction("android.intent.action.NOTIFY");
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 
-            String reminderDescription = description.getText().toString();
-            System.out.println(reminderDescription);
-            intent.putExtra("Description", reminderDescription);
+            alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, millisToAlarm, pendingIntent);
 
-            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), millisAtReminder, pendingIntent);
+//            // Hour is given in military time, so we mod by 12 to get regular time. We need to make sure to do it only if it's bigger
+//            // than 12, because otherwise, 12 mod 12 = 0 and we don't want that
+//            Integer hour = raw_hour;
+//
+//            if (raw_hour > 12) {
+//                hour = raw_hour % 12;
+//            }
+//
+//            String minute = raw_minute.toString();
+//            if (raw_minute < 10) {
+//                minute = "0" + raw_minute;              // Prefix a 0 if the minute is less than 10
+//            }
+//
+//            String reminder = month + 1 + "/" + day + "/" + year + " at " + hour + ":" + minute;    // Finally, build the string
+//
+//
+//            Context context = view.getContext();
+//            SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.acm_ucf_simplereminders_reminderdata), Context.MODE_PRIVATE);
+//            SharedPreferences.Editor editor = sharedPreferences.edit();
+//
+//            editor.putString("reminderEvent", reminder);
+//            editor.apply();
 
-        }catch(NumberFormatException e) {
 
-            System.err.println("NOPE");
-            Context context = getApplicationContext();
-            CharSequence text = "Please enter a reminder time";
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-
-        }
-
-        Toast toast = Toast.makeText(getApplicationContext(), "Reminder set!", Toast.LENGTH_SHORT);
-        toast.show();
-        finish();
+//
+//        }catch(NumberFormatException e) {
+//
+//            System.err.println("NOPE");
+//            Context context = getApplicationContext();
+//            CharSequence text = "Please enter a reminder time";
+//            int duration = Toast.LENGTH_SHORT;
+//            Toast toast = Toast.makeText(context, text, duration);
+//            toast.show();
+//
+//        }
+//
+//        Toast toast = Toast.makeText(getApplicationContext(), "Reminder set!", Toast.LENGTH_SHORT);
+//        toast.show();
+//        finish();
     }
 }

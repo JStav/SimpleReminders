@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.content.Intent;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -18,15 +17,14 @@ import java.util.List;
 
 public class CurrentRemindersActivity extends Activity {
 
-    private ListView eventsListView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_current_reminders);
         ActionBar actionBar = getActionBar();
-        actionBar.hide();
-
+        if (actionBar != null) {
+            actionBar.hide();
+        }
     }
 
     // Refresh the listview, put under onStart so when the user presses back it will automatically update
@@ -44,7 +42,7 @@ public class CurrentRemindersActivity extends Activity {
         reminders.add(currentEvent);
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, reminders);
-        eventsListView = (ListView) findViewById(R.id.currentRemindersListView);
+        ListView eventsListView = (ListView) findViewById(R.id.currentRemindersListView);
         eventsListView.setAdapter(arrayAdapter);
     }
 
