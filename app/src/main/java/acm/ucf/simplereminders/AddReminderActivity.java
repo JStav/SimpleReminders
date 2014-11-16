@@ -137,8 +137,9 @@ public class AddReminderActivity extends Activity {
 
     }
 
-    public String generateUniqueID(int year, int month, int day, int hour, int minute){
-        String ID = "" + year + month + day + hour + minute;
+    public long generateUniqueID(){
+        Calendar cal = Calendar.getInstance();
+        long ID = cal.getTimeInMillis();
         return ID;
     }
 }
