@@ -4,6 +4,8 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,9 +13,11 @@ import android.view.View;
 import android.content.Intent;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
+import android.database.DatabaseUtils;
 import java.util.ArrayList;
 import java.util.List;
+
+import savedreminderssql.SavedRemindersContract;
 
 public class CurrentRemindersActivity extends Activity {
 
@@ -36,10 +40,24 @@ public class CurrentRemindersActivity extends Activity {
         String defaultString = "";
         List<String> reminders = new ArrayList<String>();
 
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.acm_ucf_simplereminders_reminderdata), Context.MODE_PRIVATE);
-        String currentEvent = sharedPreferences.getString("reminderEvent", defaultString);
+        SavedRemindersContract.SimpleRemindersDbHelper mDbHelper = new SavedRemindersContract.SimpleRemindersDbHelper(getApplicationContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-        reminders.add(currentEvent);
+        // This projection defines which columns from the table we will use
+        String[] projection = {
+                SavedRemindersContract.ReminderEntry.COLUMN_NAME_MONTH,
+                SavedRemindersContract.ReminderEntry.COLUMN_NAME_DAY,
+                SavedRemindersContract.ReminderEntry.COLUMN_NAME_YEAR,
+                SavedRemindersContract.ReminderEntry.COLUMN_NAME_HOUR,
+                SavedRemindersContract.ReminderEntry.COLUMN_NAME_MINUTE,
+                SavedRemindersContract.ReminderEntry.COLUMN_NAME_DESCRIPTION
+        };
+
+        Cursor cursor = db.query(SavedRemindersContract.ReminderEntry.TABLE_NAME, projection, null, null, null, null, null);
+        cursor.moveToFirst();
+        int month = cursor.getInt(cursor.getColumnIndexOrThrow(SavedRemindersContract.ReminderEntry.COLUMN_NAME_MONTH));
+        String test = DatabaseUtils.dumpCursorToString(cursor);
+
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, reminders);
         ListView eventsListView = (ListView) findViewById(R.id.currentRemindersListView);
